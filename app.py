@@ -27,6 +27,7 @@ if __name__ == '__main__':
 
     # GET
     @app.route('/actors', methods=['GET'])
+    @requires_auth('get:actors')
     def get_actors():
         actors = Actor.query.order_by(Actor.id).all()
 
@@ -39,6 +40,7 @@ if __name__ == '__main__':
         }), 200
 
     @app.route('/movies', methods=['GET'])
+    @requires_auth('get:movies')
     def get_movies():
         movies = Movie.query.order_by(Movie.id).all()
 
@@ -130,7 +132,7 @@ if __name__ == '__main__':
 
     # PATCH
     @app.route('/actors/<int:actor_id>', methods=['PATCH'])
-    @requires_auth('edit:actor')
+    @requires_auth('patch:actor')
     def edit_actor():
         if not actor_id:
             abort(404)
@@ -158,7 +160,7 @@ if __name__ == '__main__':
         }), 200
 
     @app.route('/movies/<int:movie_id>', methods=['PATCH'])
-    @requires_auth('edit:movie')
+    @requires_auth('patch:movie')
     def edit_movie():
         if not movie_id:
             abort(404)
