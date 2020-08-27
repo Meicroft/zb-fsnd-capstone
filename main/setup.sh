@@ -1,0 +1,10 @@
+export DATABASE_URL=postgres://qgypvxthgbrpuu:98950e2ba0939e42f24798fefdaa55cefdc0e52a08592d2ecd1a869b7c632358@ec2-54-86-57-171.compute-1.amazonaws.com:5432/defuarg9s5e298
+export AUTH0_DOMAIN='dev-71tt1j9b.us.auth0.com'
+export ALGORITHMS=['RS256']
+export API_AUDIENCE=casting
+export CLIENT_ID=KOeuqW2Z6tPwUAquVqlQl1vLMCaxVHsx
+export FLASK_APP=app.py
+export DATABASE_URL=
+export assistant_token=
+export direct_token=
+export producer_token=
