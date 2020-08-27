@@ -2,6 +2,7 @@
 __pycache__
 venv
 /venv
+setup.sh
 
 # OS generated files #
 ######################
