@@ -109,7 +109,7 @@ def delete_movie():
 
 
 # POST
-@app.route('/new_actor', methods=['POST'])
+@app.route('/actors', methods=['POST'])
 # @requires_auth('post:actor')
 def create_actor():
     data = request.get_json()
@@ -134,7 +134,7 @@ def create_actor():
     }), 200
 
 
-@app.route('/new_movie', methods=['POST'])
+@app.route('/movies', methods=['POST'])
 # @requires_auth('post:movie')
 def create_movie():
     data = request.get_json()

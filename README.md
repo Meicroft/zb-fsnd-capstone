@@ -43,9 +43,9 @@ DELETE: delete an actor or movie
 
 POST: create a new actor or movie
 ###### (requires Director permissions)
-- /new_actor
+- /actors
 ###### (requires Producer permissions)
-- /new_movie
+- /movies
 
 PATCH: edit info of an actor or movie
 ###### (requires Director permissions)
