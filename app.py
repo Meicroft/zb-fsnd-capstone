@@ -8,14 +8,14 @@ from models import Actor, Movie, setup_db
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__)
-    CORS(app)
+    setup_db(app)
 
-    return app
+    CORS(app, resources={r"/*": {"origins": "*"}})
 
 app = create_app()
 
 if __name__ == '__main__':
-    APP.run(host='0.0.0.0', port=8080, debug=True)
+    APP.run(host='127.0.0.1', port=8080, debug=True)
 
 # -----------
 # @app.routes
@@ -27,7 +27,7 @@ if __name__ == '__main__':
 
     # GET
     @app.route('/actors', methods=['GET'])
-    @requires_auth('get:actors')
+    # @requires_auth('get:actors')
     def get_actors():
         actors = Actor.query.order_by(Actor.id).all()
 
@@ -40,7 +40,7 @@ if __name__ == '__main__':
         }), 200
 
     @app.route('/movies', methods=['GET'])
-    @requires_auth('get:movies')
+    # @requires_auth('get:movies')
     def get_movies():
         movies = Movie.query.order_by(Movie.id).all()
 
@@ -54,7 +54,7 @@ if __name__ == '__main__':
 
     # DELETE
     @app.route('/actors/<int:actor_id', methods=['DELETE'])
-    @requires_auth('delete:actor')
+    # @requires_auth('delete:actor')
     def delete_actor():
         if not actor_id:
             abort(404)
@@ -71,7 +71,7 @@ if __name__ == '__main__':
         }), 200
 
     @app.route('/movies/<int:movie_id>', methods=['DELETE'])
-    @requires_auth('delete:movie')
+    # @requires_auth('delete:movie')
     def delete_movie():
         if not movie_id:
             abort(404)
@@ -89,7 +89,7 @@ if __name__ == '__main__':
 
     # POST
     @app.route('/new_actor', methods=['POST'])
-    @requires_auth('post:actor')
+    # @requires_auth('post:actor')
     def create_actor():
         data = request.get_json()
 
@@ -113,7 +113,7 @@ if __name__ == '__main__':
         }), 200
 
     @app.route('/new_movie', methods=['POST'])
-    @requires_auth('post:movie')
+    # @requires_auth('post:movie')
     def create_movie():
         data = request.get_json()
 
@@ -132,7 +132,7 @@ if __name__ == '__main__':
 
     # PATCH
     @app.route('/actors/<int:actor_id>', methods=['PATCH'])
-    @requires_auth('patch:actor')
+    # @requires_auth('patch:actor')
     def edit_actor():
         if not actor_id:
             abort(404)
@@ -160,7 +160,7 @@ if __name__ == '__main__':
         }), 200
 
     @app.route('/movies/<int:movie_id>', methods=['PATCH'])
-    @requires_auth('patch:movie')
+    # @requires_auth('patch:movie')
     def edit_movie():
         if not movie_id:
             abort(404)

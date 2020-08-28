@@ -10,7 +10,7 @@ from flask_migrate import Migrate
 database_path = os.environ.get('DATABASE_URL')
 if not database_path:
     database_name = "agency"
-    database_path = "postgres://{}/{}".format('localhost:5432', database_name)
+    database_path = "postgres://{}/{}".format('localhost:5000', database_name)
 
 db = SQLAlchemy()
 
