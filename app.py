@@ -12,182 +12,194 @@ def create_app(test_config=None):
 
     CORS(app, resources={r"/*": {"origins": "*"}})
 
+    return app
+
 app = create_app()
 
 if __name__ == '__main__':
-    APP.run(host='127.0.0.1', port=8080, debug=True)
+    app.run(host='127.0.0.1', port=5000, debug=True)
 
 # -----------
 # @app.routes
 # -----------
 
-    @app.after_request
-    def after_request(response):
-        response.headers.add('Access-Control-Allow-Headers',
-                             'Content-Type, Authorization')
-        response.headers.add('Access-Control-Allow-Methods',
-                             'GET, POST, PATCH, DELETE, OPTIONS')
-        return response
 
-    @app.route('/')
-    def health():
-        return jsonify({'health': 'App is running.'}), 200
+@app.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Headers',
+                         'Content-Type, Authorization')
+    response.headers.add('Access-Control-Allow-Methods',
+                         'GET, POST, PATCH, DELETE, OPTIONS')
+    return response
 
-    # GET
-    @app.route('/actors', methods=['GET'])
-    # @requires_auth('get:actors')
-    def get_actors():
-        actors = Actor.query.order_by(Actor.id).all()
 
-        if not actors:
-            abort(404)
+@app.route('/')
+def health():
+    return jsonify({'health': 'App is running.'}), 200
 
-        return jsonify({
-            'success': True,
-            'actors': [actor.format() for actor in actors]
-        }), 200
 
-    @app.route('/movies', methods=['GET'])
-    # @requires_auth('get:movies')
-    def get_movies():
-        movies = Movie.query.order_by(Movie.id).all()
+# GET
+@app.route('/actors', methods=['GET'])
+# @requires_auth('get:actors')
+def get_actors():
+    actors = Actor.query.order_by(Actor.id).all()
 
-        if not movies:
-            abort(404)
+    if not actors:
+        abort(404)
 
-        return jsonify({
-            'success': True,
-            'movies': [movie.format() for movie in movies]
-        }), 200
+    return jsonify({
+        'success': True,
+        'actors': [actor.format() for actor in actors]
+    }), 200
 
-    # DELETE
-    @app.route('/actors/<int:actor_id', methods=['DELETE'])
-    # @requires_auth('delete:actor')
-    def delete_actor():
-        if not actor_id:
-            abort(404)
 
-        actor_to_remove = Actor.query.get(actor_id)
-        if not actor_to_remove:
-            abort(404)
+@app.route('/movies', methods=['GET'])
+# @requires_auth('get:movies')
+def get_movies():
+    movies = Movie.query.order_by(Movie.id).all()
 
-        actor_to_remove.delete()
+    if not movies:
+        abort(404)
 
-        return jsonify({
-          'success': True,
-          'actor_id': actor_id
-        }), 200
+    return jsonify({
+        'success': True,
+        'movies': [movie.format() for movie in movies]
+    }), 200
 
-    @app.route('/movies/<int:movie_id>', methods=['DELETE'])
-    # @requires_auth('delete:movie')
-    def delete_movie():
-        if not movie_id:
-            abort(404)
 
-        movie_to_remove = Movie.query.get(movie_id)
-        if not movie_to_remove:
-            abort(404)
+# DELETE
+@app.route('/actors/<int:actor_id>', methods=['DELETE'])
+# @requires_auth('delete:actor')
+def delete_actor():
+    if not actor_id:
+        abort(404)
 
-        movie_to_remove.delete()
+    actor_to_remove = Actor.query.get(actor_id)
+    if not actor_to_remove:
+        abort(404)
 
-        return jsonify({
-          'success': True,
-          'movie_id': movie_id
-        }), 200
+    actor_to_remove.delete()
 
-    # POST
-    @app.route('/new_actor', methods=['POST'])
-    # @requires_auth('post:actor')
-    def create_actor():
-        data = request.get_json()
+    return jsonify({
+      'success': True,
+      'actor_id': actor_id
+    }), 200
 
-        if 'name' not in data:
-            abort(422)
-        if 'age' not in data:
-            abort(422)
-        if 'gender' not in data:
-            abort(422)
 
-        actor = Actor(
-            name=data['name'],
-            age=data['age'],
-            gender=data['gender']
-            )
-        actor.insert()
+@app.route('/movies/<int:movie_id>', methods=['DELETE'])
+# @requires_auth('delete:movie')
+def delete_movie():
+    if not movie_id:
+        abort(404)
 
-        return jsonify({
-          'success': True,
-          'actor': actor.format()
-        }), 200
+    movie_to_remove = Movie.query.get(movie_id)
+    if not movie_to_remove:
+        abort(404)
 
-    @app.route('/new_movie', methods=['POST'])
-    # @requires_auth('post:movie')
-    def create_movie():
-        data = request.get_json()
+    movie_to_remove.delete()
 
-        if 'title' not in data:
-            abort(422)
-        if 'release_date' not in data:
-            abort(422)
+    return jsonify({
+      'success': True,
+      'movie_id': movie_id
+    }), 200
 
-        movie = Movie(title=data['title'], release=data['release_date'])
-        movie.insert()
 
-        return jsonify({
-          'success': True,
-          'movie': movie.format()
-        }), 200
+# POST
+@app.route('/new_actor', methods=['POST'])
+# @requires_auth('post:actor')
+def create_actor():
+    data = request.get_json()
 
-    # PATCH
-    @app.route('/actors/<int:actor_id>', methods=['PATCH'])
-    # @requires_auth('patch:actor')
-    def edit_actor():
-        if not actor_id:
-            abort(404)
+    if 'name' not in data:
+        abort(422)
+    if 'age' not in data:
+        abort(422)
+    if 'gender' not in data:
+        abort(422)
 
-        actor = Actor.query.get(actor_id)
-        if not actor:
-            abort(404)
+    actor = Actor(
+        name=data['name'],
+        age=data['age'],
+        gender=data['gender']
+        )
+    actor.insert()
 
-        data = request.get_json()
+    return jsonify({
+      'success': True,
+      'actor': actor.format()
+    }), 200
 
-        if 'name' in data and data['name']:
-            actor.name = data['name']
 
-        if 'age' in data and data['age']:
-            actor.age = data['age']
+@app.route('/new_movie', methods=['POST'])
+# @requires_auth('post:movie')
+def create_movie():
+    data = request.get_json()
 
-        if 'gender' in data and data['gender']:
-            actor.gender = data['gender']
+    if 'title' not in data:
+        abort(422)
+    if 'release_date' not in data:
+        abort(422)
 
-        actor.update()
+    movie = Movie(title=data['title'], release=data['release_date'])
+    movie.insert()
 
-        return jsonify({
-            'success': True,
-            'actor': actor.format(),
-        }), 200
+    return jsonify({
+      'success': True,
+      'movie': movie.format()
+    }), 200
 
-    @app.route('/movies/<int:movie_id>', methods=['PATCH'])
-    # @requires_auth('patch:movie')
-    def edit_movie():
-        if not movie_id:
-            abort(404)
 
-        movie = Movie.query.get(movie_id)
-        if not movie:
-            abort(404)
+# PATCH
+@app.route('/actors/<int:actor_id>', methods=['PATCH'])
+# @requires_auth('patch:actor')
+def edit_actor():
+    if not actor_id:
+        abort(404)
 
-        data = request.get_json()
+    actor = Actor.query.get(actor_id)
+    if not actor:
+        abort(404)
 
-        if 'title' in data and data['title']:
-            movie.title = data['title']
+    data = request.get_json()
 
-        if 'release_date' in data and data['release_date']:
-            movie.release_date = data['release_date']
+    if 'name' in data and data['name']:
+        actor.name = data['name']
 
-        movie.update()
+    if 'age' in data and data['age']:
+        actor.age = data['age']
 
-        return jsonify({
-            'success': True,
-            'movie': movie.format(),
-        }), 200
+    if 'gender' in data and data['gender']:
+        actor.gender = data['gender']
+
+    actor.update()
+
+    return jsonify({
+        'success': True,
+        'actor': actor.format(),
+    }), 200
+
+
+@app.route('/movies/<int:movie_id>', methods=['PATCH'])
+# @requires_auth('patch:movie')
+def edit_movie():
+    if not movie_id:
+        abort(404)
+
+    movie = Movie.query.get(movie_id)
+    if not movie:
+        abort(404)
+
+    data = request.get_json()
+
+    if 'title' in data and data['title']:
+        movie.title = data['title']
+
+    if 'release_date' in data and data['release_date']:
+        movie.release_date = data['release_date']
+
+    movie.update()
+
+    return jsonify({
+        'success': True,
+        'movie': movie.format(),
+    }), 200
