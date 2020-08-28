@@ -2,7 +2,7 @@ import os
 from flask import Flask, request, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
-from models import Actor, Movie, setup_db
+from models import Actor, Movie, setup_db, db_drop_and_create_all
 
 
 def create_app(test_config=None):
@@ -11,6 +11,8 @@ def create_app(test_config=None):
     setup_db(app)
 
     CORS(app, resources={r"/*": {"origins": "*"}})
+
+    db_drop_and_create_all()
 
     return app
 
@@ -42,14 +44,16 @@ def health():
 @app.route('/actors', methods=['GET'])
 # @requires_auth('get:actors')
 def get_actors():
-    actors = Actor.query.order_by(Actor.id).all()
+    # actors_query = Actor.query.order_by(Actor.id).all()
+    actors_query = Actor.query.all()
+    actors = [actor.format() for actor in actors_query]
 
     if not actors:
         abort(404)
 
     return jsonify({
         'success': True,
-        'actors': [actor.format() for actor in actors]
+        'actors': actors
     }), 200
 
 
