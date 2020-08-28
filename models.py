@@ -10,12 +10,13 @@ from flask_migrate import Migrate
 database_path = os.environ.get('DATABASE_URL')
 if not database_path:
     database_name = "agency"
-    database_path = "postgres://{}/{}".format('localhost:5000', database_name)
+    database_path = "postgres://{}:{}@{}/{}".format(
+        'postgres', 'root', 'localhost:5000', database_name)
 
 db = SQLAlchemy()
 
 
-def setup_db(app, database_path=database_path):
+def setup_db(app):
     app.config["SQLALCHEMY_DATABASE_URI"] = database_path
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.app = app
@@ -24,7 +25,9 @@ def setup_db(app, database_path=database_path):
 
 def db_drop_and_create_all():
     db.drop_all()
+    print('dropped successfully')
     db.create_all()
+    print('created successfully')
 
 # ---------
 # Models
