@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, abort, jsonify
+from flask import Flask, request, abort, jsonify, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from models import Actor, Movie, setup_db, db_drop_and_create_all
@@ -36,33 +36,27 @@ def after_request(response):
 
 
 @app.route('/')
-def health():
-    return jsonify({'health': 'App is running.'}), 200
+def home():
+    return render_template('home.html')
 
 
 # GET
 @app.route('/actors', methods=['GET'])
 # @requires_auth('get:actors')
 def get_actors():
-    # actors_query = Actor.query.order_by(Actor.id).all()
-    actors_query = Actor.query.all()
-    actors = [actor.format() for actor in actors_query]
-
-    return jsonify({
-        'success': True,
-        'actors': actors
-    }), 200
+    return render_template('actors.html', data=Actor.query.order_by(Actor.name).all())
 
 
 @app.route('/movies', methods=['GET'])
 # @requires_auth('get:movies')
 def get_movies():
-    movies = Movie.query.order_by(Movie.id).all()
+    return render_template('movies.html', data=Movie.query.order_by(Movie.title).all())
+    # movies = Movie.query.order_by(Movie.id).all()
 
-    return jsonify({
-        'success': True,
-        'movies': [movie.format() for movie in movies]
-    }), 200
+    # return jsonify({
+    #     'success': True,
+    #     'movies': [movie.format() for movie in movies]
+    # }), 200
 
 
 # DELETE

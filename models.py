@@ -42,7 +42,7 @@ class Movie(db.Model):
     release_date = db.Column(db.Date, nullable=False)
 
     def __repr__(self):
-        return f"<Movie id='{self.id}' name='{self.title}'>"
+        return f'<Movie {self.id} {self.title}>'
 
     def __init__(self, title, release_date):
         self.title = title
@@ -76,7 +76,7 @@ class Actor(db.Model):
     gender = db.Column(db.String(10), nullable=False)
 
     def __repr__(self):
-        return f"<Actor id='{self.id}' name='{self.name}'>"
+        return f'<Actor {self.id} {self.name}>'
 
     def __init__(self, name, age, gender):
         self.name = name
