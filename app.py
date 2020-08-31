@@ -48,9 +48,6 @@ def get_actors():
     actors_query = Actor.query.all()
     actors = [actor.format() for actor in actors_query]
 
-    if not actors:
-        abort(404)
-
     return jsonify({
         'success': True,
         'actors': actors
@@ -62,9 +59,6 @@ def get_actors():
 def get_movies():
     movies = Movie.query.order_by(Movie.id).all()
 
-    if not movies:
-        abort(404)
-
     return jsonify({
         'success': True,
         'movies': [movie.format() for movie in movies]
@@ -74,7 +68,7 @@ def get_movies():
 # DELETE
 @app.route('/actors/<int:actor_id>', methods=['DELETE'])
 # @requires_auth('delete:actor')
-def delete_actor():
+def delete_actor(actor_id):
     if not actor_id:
         abort(404)
 
@@ -92,7 +86,7 @@ def delete_actor():
 
 @app.route('/movies/<int:movie_id>', methods=['DELETE'])
 # @requires_auth('delete:movie')
-def delete_movie():
+def delete_movie(movie_id):
     if not movie_id:
         abort(404)
 
@@ -137,6 +131,7 @@ def create_actor():
 @app.route('/movies', methods=['POST'])
 # @requires_auth('post:movie')
 def create_movie():
+    print(request.get_json())
     data = request.get_json()
 
     if 'title' not in data:
@@ -144,7 +139,7 @@ def create_movie():
     if 'release_date' not in data:
         abort(422)
 
-    movie = Movie(title=data['title'], release=data['release_date'])
+    movie = Movie(title=data['title'], release_date=data['release_date'])
     movie.insert()
 
     return jsonify({
@@ -156,7 +151,7 @@ def create_movie():
 # PATCH
 @app.route('/actors/<int:actor_id>', methods=['PATCH'])
 # @requires_auth('patch:actor')
-def edit_actor():
+def edit_actor(actor_id):
     if not actor_id:
         abort(404)
 
@@ -185,7 +180,7 @@ def edit_actor():
 
 @app.route('/movies/<int:movie_id>', methods=['PATCH'])
 # @requires_auth('patch:movie')
-def edit_movie():
+def edit_movie(movie_id):
     if not movie_id:
         abort(404)
 
