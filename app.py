@@ -13,7 +13,7 @@ def create_app(test_config=None):
 
     CORS(app, resources={r"/*": {"origins": "*"}})
 
-    db_drop_and_create_all()
+    # db_drop_and_create_all()
 
     return app
 
@@ -56,9 +56,10 @@ def get_movies():
                            data=Movie.query.order_by(Movie.title).all())
 
 
-# @app.route('/actors/<int:actor_id>', methods=['GET'])
-# def get_actor():
-#     return render_template('actor.html')
+@app.route('/actors/<int:actor_id>', methods=['GET'])
+def get_actor(actor_id):
+    return render_template('actor.html',
+                           data=Actor.query.get(actor_id))
 
 
 # @app.route('/movies/<int:movie_id>', methods=['GET'])

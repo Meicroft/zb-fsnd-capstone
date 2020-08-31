@@ -101,3 +101,10 @@ class Actor(db.Model):
             "age": self.age,
             "gender": self.gender
         }
+
+    def short(self):
+        return{
+            "name": self.name,
+            "age": self.age,
+            "gender": self.gender
+        }

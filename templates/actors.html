@@ -86,11 +86,6 @@
         .then(response => response.json())
         .then(jsonResponse => {
           const li = document.createElement('li');
-          const checkbox = document.createElement('input');
-          checkbox.className = 'check-completed';
-          checkbox.type = 'checkbox';
-          checkbox.setAttribute('data-id', jsonResponse.id);
-          li.appendChild(checkbox);
 
           const text = document.createTextNode(' ' + jsonResponse.name);
           li.appendChild(text);
