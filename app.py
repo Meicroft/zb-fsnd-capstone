@@ -56,14 +56,14 @@ def get_movies():
                            data=Movie.query.order_by(Movie.title).all())
 
 
-@app.route('/actors/<int:actor_id>', methods=['GET'])
-def get_actor():
-    return render_template('actor.html')
+# @app.route('/actors/<int:actor_id>', methods=['GET'])
+# def get_actor():
+#     return render_template('actor.html')
 
 
-@app.route('/movies/<int:movie_id>', methods['GET'])
-def get_movie():
-    return render_template('movie.html')
+# @app.route('/movies/<int:movie_id>', methods=['GET'])
+# def get_movie():
+#     return render_template('movie.html')
 
 
 # DELETE
