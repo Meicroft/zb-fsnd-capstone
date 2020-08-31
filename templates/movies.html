@@ -8,5 +8,19 @@
       <li>{{ d.title }}</li>
       {% endfor %}
     </ul>
+    <form method="post" action="/movies/create">
+      <label>List New Movie</label>
+      <div>
+        <label for="title">Movie Title</label>
+        <input type="text" name="title" />
+      </div>
+      <div>
+        <label for="release_date">Movie Release Date</label>
+        <input type="text" name="release_date" />
+      </div>
+      <div>
+        <input type="submit" value="List Movie" />
+      </div>
+    </form>
   </body>
 </html>

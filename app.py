@@ -1,5 +1,6 @@
 import os
-from flask import Flask, request, abort, jsonify, render_template
+from flask import Flask, request, abort, jsonify, render_template, \
+    redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from models import Actor, Movie, setup_db, db_drop_and_create_all
@@ -44,19 +45,25 @@ def home():
 @app.route('/actors', methods=['GET'])
 # @requires_auth('get:actors')
 def get_actors():
-    return render_template('actors.html', data=Actor.query.order_by(Actor.name).all())
+    return render_template('actors.html',
+                           data=Actor.query.order_by(Actor.name).all())
 
 
 @app.route('/movies', methods=['GET'])
 # @requires_auth('get:movies')
 def get_movies():
-    return render_template('movies.html', data=Movie.query.order_by(Movie.title).all())
-    # movies = Movie.query.order_by(Movie.id).all()
+    return render_template('movies.html',
+                           data=Movie.query.order_by(Movie.title).all())
 
-    # return jsonify({
-    #     'success': True,
-    #     'movies': [movie.format() for movie in movies]
-    # }), 200
+
+@app.route('/actors/<int:actor_id>', methods=['GET'])
+def get_actor():
+    return render_template('actor.html')
+
+
+@app.route('/movies/<int:movie_id>', methods['GET'])
+def get_movie():
+    return render_template('movie.html')
 
 
 # DELETE
@@ -97,49 +104,29 @@ def delete_movie(movie_id):
 
 
 # POST
-@app.route('/actors', methods=['POST'])
+@app.route('/actors/create', methods=['POST'])
 # @requires_auth('post:actor')
 def create_actor():
-    data = request.get_json()
-
-    if 'name' not in data:
-        abort(422)
-    if 'age' not in data:
-        abort(422)
-    if 'gender' not in data:
-        abort(422)
-
     actor = Actor(
-        name=data['name'],
-        age=data['age'],
-        gender=data['gender']
+        name=request.form.get('name'),
+        age=request.form.get('age'),
+        gender=request.form.get('gender')
         )
     actor.insert()
 
-    return jsonify({
-      'success': True,
-      'actor': actor.format()
-    }), 200
+    return redirect(url_for('get_actors'))
 
 
-@app.route('/movies', methods=['POST'])
+@app.route('/movies/create', methods=['POST'])
 # @requires_auth('post:movie')
 def create_movie():
-    print(request.get_json())
-    data = request.get_json()
-
-    if 'title' not in data:
-        abort(422)
-    if 'release_date' not in data:
-        abort(422)
-
-    movie = Movie(title=data['title'], release_date=data['release_date'])
+    movie = Movie(
+        title=request.form.get('title'),
+        release_date=request.form.get('release_date')
+        )
     movie.insert()
 
-    return jsonify({
-      'success': True,
-      'movie': movie.format()
-    }), 200
+    return redirect(url_for('get_movies'))
 
 
 # PATCH
