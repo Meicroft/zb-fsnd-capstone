@@ -1,38 +1,23 @@
 <html>
   <head>
-    <title>Movies Page</title>
-    <style>
-      .hidden {
-        display: none;
-      }
-      ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        width: 200px;
-      }
-      li {
-        clear: both;
-      }
-      li button {
-        -webkit-appearance: none;
-        border: none;
-        outline: none;
-        color: red;
-        float: right;
-        cursor: pointer;
-        font-size: 20px;
-      }
-    </style>
+    <title>Movies Page</title>>
+    <link rel="stylesheet" href="style.css" type="text/css">
   </head>
+  <div>
+    <a href="/actors"><button class="btn btn-default btn-lg">View Our Actors</button></a>
+  </div>
   <body>
-    <div id="error" class="hidden">Something went wrong!</div>
     <ul id="movies">
       {% for d in data %}
       <li>
-        
+        <form method="get" action="/movies/{{ d.id }}">
+          <button>Movie Details</button>
+        </form>
+        <!-- <form method="patch" action="/movies/{{ d.id }}">
+          <button>&#9998;</button>
+        </form> -->
         {{ d.title }}
-        <button class="delete-button" data-id="{{ d.id }}">&cross;</button>
+        <button class="delete-button" data-id="{{ d.id }}">Delete Movie</button>
       </li>
       {% endfor %}
     </ul>
