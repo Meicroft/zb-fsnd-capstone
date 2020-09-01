@@ -62,9 +62,10 @@ def get_actor(actor_id):
                            data=Actor.query.get(actor_id))
 
 
-# @app.route('/movies/<int:movie_id>', methods=['GET'])
-# def get_movie():
-#     return render_template('movie.html')
+@app.route('/movies/<int:movie_id>', methods=['GET'])
+def get_movie(movie_id):
+    return render_template('movie.html',
+                           data=Movie.query.get(movie_id))
 
 
 # DELETE

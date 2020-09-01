@@ -1,6 +1,6 @@
 import os
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Column, String, Integer, ForeignKey, Float, Date
+from sqlalchemy import Column, String, Integer, ForeignKey, Float, Date, Table
 from flask_migrate import Migrate
 
 # ---------
@@ -33,6 +33,15 @@ def db_drop_and_create_all():
 # Models
 # ---------
 
+actors_in_movies = db.Table('actors_in_movies',
+                            db.Column('movie_id', db.Integer,
+                                      db.ForeignKey('movies.id'),
+                                      primary_key=True),
+                            db.Column('actor_id', db.Integer,
+                                      db.ForeignKey('actors.id'),
+                                      primary_key=True)
+                            )
+
 
 class Movie(db.Model):
     __tablename__ = "movies"
@@ -40,6 +49,8 @@ class Movie(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(180), nullable=False)
     release_date = db.Column(db.Date, nullable=False)
+    actors = db.relationship('Actor', secondary=actors_in_movies,
+                             backref=db.backref('movies', lazy=True))
 
     def __repr__(self):
         return f'<Movie {self.id} {self.title}>'
@@ -63,7 +74,15 @@ class Movie(db.Model):
         return{
             "id": self.id,
             "title": self.title,
-            "release_date": self.release_date
+            "release_date": self.release_date,
+            "actors": self.actors
+        }
+
+    def short(self):
+        return{
+            "title": self.title,
+            "release_date": self.release_date,
+            "actors": self.actors
         }
 
 
