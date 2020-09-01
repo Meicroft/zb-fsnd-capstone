@@ -53,7 +53,7 @@ class Movie(db.Model):
                              backref=db.backref('movies', lazy=True))
 
     def __repr__(self):
-        return f'<Movie {self.id} {self.title}>'
+        return f'{self.title}, released {self.release_date}.'
 
     def __init__(self, title, release_date):
         self.title = title
@@ -95,7 +95,7 @@ class Actor(db.Model):
     gender = db.Column(db.String(10), nullable=False)
 
     def __repr__(self):
-        return f'<Actor {self.id} {self.name}>'
+        return f'{self.name}, {self.age} years old.'
 
     def __init__(self, name, age, gender):
         self.name = name
