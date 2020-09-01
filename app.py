@@ -144,13 +144,13 @@ def edit_actor(actor_id):
 
     data = request.get_json()
 
-    if 'name' in data and data['name']:
+    if 'name' in data and data['name'] != '':
         actor.name = data['name']
 
-    if 'age' in data and data['age']:
+    if 'age' in data and data['age'] != '':
         actor.age = data['age']
 
-    if 'gender' in data and data['gender']:
+    if 'gender' in data and data['gender'] != '':
         actor.gender = data['gender']
 
     actor.update()
@@ -173,10 +173,10 @@ def edit_movie(movie_id):
 
     data = request.get_json()
 
-    if 'title' in data and data['title']:
+    if 'title' in data and data['title'] != '':
         movie.title = data['title']
 
-    if 'release_date' in data and data['release_date']:
+    if 'release_date' in data and data['release_date'] != '':
         movie.release_date = data['release_date']
 
     movie.update()
