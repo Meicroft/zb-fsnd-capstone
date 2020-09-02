@@ -13,7 +13,7 @@
         {% for d in data %}
         <li>
           <form action="/actors/{{ d.id }}">
-            <button>Actor Details</button>
+            <button class="details-button">Actor Details</button>
           </form>
           {{ d.name }}
           <button class="delete-button" data-id="{{ d.id }}">Delete Actor</button>

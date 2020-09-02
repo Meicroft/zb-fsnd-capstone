@@ -13,11 +13,8 @@
         {% for d in data %}
         <li>
           <form method="get" action="/movies/{{ d.id }}">
-            <button>Movie Details</button>
+            <button class="details-button">Movie Details</button>
           </form>
-          <!-- <form method="patch" action="/movies/{{ d.id }}">
-            <button>&#9998;</button>
-          </form> -->
           {{ d.title }}
           <button class="delete-button" data-id="{{ d.id }}">Delete Movie</button>
         </li>

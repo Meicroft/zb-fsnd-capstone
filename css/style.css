@@ -10,12 +10,21 @@ ul {
 li {
   clear: both;
 }
-li button {
+.delete-button {
   -webkit-appearance: none;
   border: none;
   outline: none;
   color: red;
   float: right;
+  cursor: pointer;
+  font-size: 10px;
+}
+.details-button {
+  -webkit-appearance: none;
+  border: none;
+  outline: none;
+  color: greenyellow;
+  float: left;
   cursor: pointer;
   font-size: 10px;
 }
