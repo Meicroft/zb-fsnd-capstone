@@ -84,8 +84,14 @@ def delete_actor(actor_id):
     actor_to_remove = Actor.query.filter_by(id=actor_id)
     if not actor_to_remove:
         abort(404)
-
-    actor_to_remove.delete()
+        
+    try:
+        actor_to_remove.delete()
+        db.session.commit()
+    except:
+        db.session.rollback()
+    finally:
+        db.session.close()
 
     return jsonify({
       'success': True,
@@ -110,8 +116,6 @@ def delete_movie(movie_id):
         db.session.rollback()
     finally:
         db.session.close()
-    # movie_to_remove.delete()
-    # db.session.commit()
 
     return jsonify({
       'success': True,
