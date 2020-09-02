@@ -40,54 +40,19 @@
         </form>
       <script>
         const deleteBtns = document.querySelectorAll('.delete-button');
-          for (let i = 0; i < deleteBtns.length; i++) {
-            const btn = deleteBtns[i];
-            btn.onclick = function(e) {
-              const actorId = e.target.dataset['id'];
-              fetch('/actors/' + actorId, {
-                method: 'DELETE'
-              })
-              .then(function() {
-                const item = e.target.parentElement;
-                item.remove();
-              })
-            }
+        for (let i = 0; i < deleteBtns.length; i++) {
+          const btn = deleteBtns[i];
+          btn.onclick = function(e) {
+            const actorId = e.target.dataset['id'];
+            fetch('/actors/' + actorId, {
+              method: 'DELETE'
+            })
+            .then(function() {
+              const item = e.target.parentElement;
+              item.remove();
+            })
           }
-        // const nameInput = document.getElementById('name');
-        // document.getElementById('form').onsubmit = function(e) {
-        //   e.preventDefault();
-        //   const name = nameInput.value;
-        //   nameInput.value = '';
-        //   fetch('/actors/create', {
-        //     method: 'POST',
-        //     body: JSON.stringify({
-        //       'name': name,
-        //     }),
-        //     headers: {
-        //       'Content-Type': 'application/json',
-        //     }
-        //   })
-        //   .then(response => response.json())
-        //   .then(jsonResponse => {
-        //     const li = document.createElement('li');
-
-        //     const text = document.createTextNode(' ' + jsonResponse.name);
-        //     li.appendChild(text);
-
-        //     const deleteBtn = document.createElement('button');
-        //     deleteBtn.className = 'delete-button';
-        //     deleteBtn.setAttribute('data-id', jsonResponse.id);
-        //     deleteBtn.innerHTML = '&cross;';
-        //     li.appendChild(deleteBtn);
-
-        //     document.getElementById('actors').appendChild(li);
-        //     document.getElementById('error').className = 'hidden';
-        //   })
-        //   .catch(function() {
-        //     console.error('Error occurred');
-        //     document.getElementById('error').className = '';
-        //   })
-        // }
+        }
       </script>
   </body>
 </html>
