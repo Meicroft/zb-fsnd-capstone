@@ -4,7 +4,7 @@ from flask import Flask, request, abort, jsonify, render_template, \
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from models import Actor, Movie, setup_db, db_drop_and_create_all, db
-# from auth import AuthError, requires_auth
+from auth import AuthError, requires_auth
 
 
 def create_app(test_config=None):
@@ -49,7 +49,7 @@ def home():
 
 # GET
 @app.route('/actors', methods=['GET'])
-# @requires_auth('get:actors')
+@requires_auth('get:actors')
 def get_actors():
     return render_template('actors.html',
                            data=Actor.query.order_by(Actor.name).all())
@@ -65,13 +65,13 @@ def get_movies():
 @app.route('/actors/<int:actor_id>', methods=['GET'])
 def get_actor(actor_id):
     return render_template('actor.html',
-                           data=Actor.query.get(actor_id))
+                           data=Actor.query.get_or_404(actor_id))
 
 
 @app.route('/movies/<int:movie_id>', methods=['GET'])
 def get_movie(movie_id):
     return render_template('movie.html',
-                           data=Movie.query.get(movie_id))
+                           data=Movie.query.get_or_404(movie_id))
 
 
 # DELETE
@@ -156,7 +156,7 @@ def edit_actor(actor_id):
     if not actor_id:
         abort(404)
 
-    actor = Actor.query.get(actor_id)
+    actor = Actor.query.get_or_404(actor_id)
     if not actor:
         abort(404)
 
@@ -185,7 +185,7 @@ def edit_movie(movie_id):
     if not movie_id:
         abort(404)
 
-    movie = Movie.query.get(movie_id)
+    movie = Movie.query.get_or_404(movie_id)
     if not movie:
         abort(404)
 
@@ -203,3 +203,16 @@ def edit_movie(movie_id):
         'success': True,
         'movie': movie.format(),
     }), 200
+
+
+@app.errorhandler(400)
+@app.errorhandler(401)
+@app.errorhandler(403)
+@app.errorhandler(404)
+@app.errorhandler(405)
+def error_handler(error):
+    return jsonify({
+        'success': False,
+        'error': error.code,
+        'message': error.description
+    }), error.code

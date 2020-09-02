@@ -1,7 +1,6 @@
 import json
 from flask import request, abort
 from functools import wraps
-
 from jose import jwt
 from urllib.request import urlopen
 
@@ -12,11 +11,6 @@ API_AUDIENCE = 'casting'
 
 # AuthError Exception
 class AuthError(Exception):
-    """
-    AuthError Exception
-    A standardized way to communicate auth failure modes
-    """
-
     def __init__(self, error, status_code):
         self.error = error
         self.status_code = status_code
@@ -24,52 +18,35 @@ class AuthError(Exception):
 
 # Auth Header
 def get_token_auth_header():
-    auth_header = request.headers.get("Authorization", None)
+    print(request)
+    if "Authorization" not in request.headers:
+        abort(401)
 
-    if auth_header is None:
-        raise AuthError({
-            "code": "authorization_header_missing",
-            "description": "Authorization Header is required."
-        }, 401)
+    auth_header = request.headers["Authorization"]
+    auth_header_parts = auth_header.split(" ")
 
-    auth_header_values = auth_header.split(" ")
-    if len(auth_header_values) != 2:
-        raise AuthError({
-            "code": "invalid_authorization_header",
-            "description": "Authorization Header is malformed."
-        }, 401)
-    elif auth_header_values[0].lower() != "bearer":
-        raise AuthError({
-            "code": "invalid_authorization_header",
-            "description": "Authorization Header must start with \"Bearer\"."
-        }, 401)
+    if len(auth_header_parts) != 2:
+        abort(401)
+    elif auth_header_parts[0].lower() != "bearer":
+        abort(401)
 
-    return auth_header_values[1]
+    token = auth_header_parts[1]
+    return token
 
 
 def check_permissions(permission, payload):
     if 'permissions' not in payload:
-        raise AuthError({
-            'code': 'invalid_claims',
-            'description': 'Permissions not included in JWT.'
-        }, 400)
-
+        abort(400)
     if permission not in payload['permissions']:
-        raise AuthError({
-            'code': 'unauthorized',
-            'description': 'Requested Permission not found.'
-        }, 401)
-
+        abort(403)
     return True
 
 
 def verify_decode_jwt(token):
-    url_string = "https://{}/.well-known/jwks.json".format(AUTH0_DOMAIN)
-    json_url = urlopen(url_string)
+    json_url = urlopen(f"https://{AUTH0_DOMAIN}/.well-known/jwks.json")
     jwks = json.loads(json_url.read())
     unverified_header = jwt.get_unverified_header(token)
     rsa_key = {}
-
     if 'kid' not in unverified_header:
         raise AuthError({
             'code': 'invalid_authorization_header',
@@ -122,21 +99,18 @@ def verify_decode_jwt(token):
         'description': 'Unable to find the appropriate key.'
     }, 401)
 
-
 def requires_auth(permission=''):
     def requires_auth_decorator(f):
         @wraps(f)
         def wrapper(*args, **kwargs):
+            token = get_token_auth_header()
             try:
-                token = get_token_auth_header()
                 payload = verify_decode_jwt(token)
-                check_permissions(permission, payload)
-            except AuthError as authError:
-                raise abort(authError.status_code,
-                            authError.error["description"])
+            except:
+                abort(401)
+
+            check_permissions(permission, payload)
 
             return f(payload, *args, **kwargs)
-
         return wrapper
-
     return requires_auth_decorator
