@@ -77,29 +77,20 @@ def get_movie(movie_id):
 # DELETE
 @app.route('/actors/<int:actor_id>', methods=['DELETE'])
 # @requires_auth('delete:actor')
-# def delete_actor(actor_id):
-#     if not actor_id:
-#         abort(404)
-
-#     actor_to_remove = Actor.query.get(actor_id)
-#     if not actor_to_remove:
-#         abort(404)
-
-#     actor_to_remove.delete()
-
-#     return jsonify({
-#       'success': True,
-#       'actor_id': actor_id
-#     }), 200
 def delete_actor(actor_id):
-    try:
-        Todo.query.filter_by(id=actor_id).delete()
-        db.session.commit()
-    except:
-        db.session.rollback()
-    finally:
-        db.session.close()
-    return jsonify({ 'success': True })
+    if not actor_id:
+        abort(404)
+
+    actor_to_remove = Actor.query.filter_by(id=actor_id)
+    if not actor_to_remove:
+        abort(404)
+
+    actor_to_remove.delete()
+
+    return jsonify({
+      'success': True,
+      'actor_id': actor_id
+    }), 200
 
 
 @app.route('/movies/<int:movie_id>', methods=['DELETE'])
@@ -118,14 +109,6 @@ def delete_movie(movie_id):
       'success': True,
       'movie_id': movie_id
     }), 200
-    # try:
-    #     Movie.query.filter_by(id=movie_id).delete()
-    #     db.session.commit()
-    # except:
-    #     db.session.rollback()
-    # finally:
-    #     db.session.close()
-    # return jsonify({ 'success': True })
 
 
 # POST
@@ -133,9 +116,9 @@ def delete_movie(movie_id):
 # @requires_auth('post:actor')
 def create_actor():
     actor = Actor(
-        name=request.form.get('name'),
-        age=request.form.get('age'),
-        gender=request.form.get('gender')
+        name=request.get_json('name'),
+        age=request.get_json('age'),
+        gender=request.get_json('gender')
         )
     actor.insert()
 

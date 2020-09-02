@@ -47,13 +47,9 @@
               fetch('/actors/' + actorId, {
                 method: 'DELETE'
               })
-              // .then(function() {
-              //   const item = e.target.parentElement;
-              //   item.remove();
-              // })
               .then(function() {
                 const item = e.target.parentElement;
-                item.delete();
+                item.remove();
               })
             }
           }
