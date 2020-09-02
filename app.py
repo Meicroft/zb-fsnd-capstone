@@ -77,20 +77,29 @@ def get_movie(movie_id):
 # DELETE
 @app.route('/actors/<int:actor_id>', methods=['DELETE'])
 # @requires_auth('delete:actor')
+# def delete_actor(actor_id):
+#     if not actor_id:
+#         abort(404)
+
+#     actor_to_remove = Actor.query.get(actor_id)
+#     if not actor_to_remove:
+#         abort(404)
+
+#     actor_to_remove.delete()
+
+#     return jsonify({
+#       'success': True,
+#       'actor_id': actor_id
+#     }), 200
 def delete_actor(actor_id):
-    if not actor_id:
-        abort(404)
-
-    actor_to_remove = Actor.query.get(actor_id)
-    if not actor_to_remove:
-        abort(404)
-
-    actor_to_remove.delete()
-
-    return jsonify({
-      'success': True,
-      'actor_id': actor_id
-    }), 200
+    try:
+        Todo.query.filter_by(id=actor_id).delete()
+        db.session.commit()
+    except:
+        db.session.rollback()
+    finally:
+        db.session.close()
+    return jsonify({ 'success': True })
 
 
 @app.route('/movies/<int:movie_id>', methods=['DELETE'])
@@ -99,7 +108,7 @@ def delete_movie(movie_id):
     if not movie_id:
         abort(404)
 
-    movie_to_remove = Movie.query.get(movie_id)
+    movie_to_remove = Movie.query.filter_by(id=movie_id)
     if not movie_to_remove:
         abort(404)
 
@@ -109,6 +118,14 @@ def delete_movie(movie_id):
       'success': True,
       'movie_id': movie_id
     }), 200
+    # try:
+    #     Movie.query.filter_by(id=movie_id).delete()
+    #     db.session.commit()
+    # except:
+    #     db.session.rollback()
+    # finally:
+    #     db.session.close()
+    # return jsonify({ 'success': True })
 
 
 # POST

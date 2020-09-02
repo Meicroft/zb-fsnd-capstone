@@ -13,25 +13,25 @@
         {% for d in data %}
         <li>
           <form action="/actors/{{ d.id }}">
-            <button class="details-button">Actor Details</button>
+            <button class="details-button">Details</button>
           </form>
           {{ d.name }}
-          <button class="delete-button" data-id="{{ d.id }}">Delete Actor</button>
+          <button class="delete-button" data-id="{{ d.id }}">Delete</button>
         </li>
         {% endfor %}
       </ul>
       <form method="post" action="/actors/create">
           <label>List New Actor</label>
           <div>
-            <label for="name">Actors Name</label>
+            <label for="name">Name</label>
             <input type="text" name="name" />
           </div>
           <div>
-            <label for="age">Actors Age</label>
+            <label for="age">Age</label>
             <input type="number" name="age" />
           </div>
           <div>
-            <label for="gender">Actors Gender</label>
+            <label for="gender">Gender</label>
             <input type="text" name="gender" />
           </div>
           <div>
@@ -40,19 +40,23 @@
         </form>
       <script>
         const deleteBtns = document.querySelectorAll('.delete-button');
-        for (let i = 0; i < deleteBtns.length; i++) {
-          const btn = deleteBtns[i];
-          btn.onclick = function(e) {
-            const actorId = e.target.dataset['id'];
-            fetch('/actors/' + actorId, {
-              method: 'DELETE'
-            })
-            .then(function() {
-              const item = e.target.parentElement;
-              item.remove();
-            })
+          for (let i = 0; i < deleteBtns.length; i++) {
+            const btn = deleteBtns[i];
+            btn.onclick = function(e) {
+              const actorId = e.target.dataset['id'];
+              fetch('/actors/' + actorId, {
+                method: 'DELETE'
+              })
+              // .then(function() {
+              //   const item = e.target.parentElement;
+              //   item.remove();
+              // })
+              .then(function() {
+                const item = e.target.parentElement;
+                item.delete();
+              })
+            }
           }
-        }
         const nameInput = document.getElementById('name');
         document.getElementById('form').onsubmit = function(e) {
           e.preventDefault();

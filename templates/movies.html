@@ -13,21 +13,21 @@
         {% for d in data %}
         <li>
           <form method="get" action="/movies/{{ d.id }}">
-            <button class="details-button">Movie Details</button>
+            <button class="details-button">Details</button>
           </form>
           {{ d.title }}
-          <button class="delete-button" data-id="{{ d.id }}">Delete Movie</button>
+          <button class="delete-button" data-id="{{ d.id }}">Delete</button>
         </li>
         {% endfor %}
       </ul>
       <form method="post" action="/movies/create">
           <label>List New Movie</label>
           <div>
-            <label for="title">Movies Title</label>
+            <label for="title">Title</label>
             <input type="text" name="title" />
           </div>
           <div>
-            <label for="release_date">Movies release_date</label>
+            <label for="release_date">Release Date</label>
             <input type="date" name="release_date" />
           </div>
           <div>

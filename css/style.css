@@ -17,16 +17,16 @@ li {
   color: red;
   float: right;
   cursor: pointer;
-  font-size: 10px;
+  font-size: 25px;
 }
 .details-button {
   -webkit-appearance: none;
   border: none;
   outline: none;
-  color: greenyellow;
+  color: blue;
   float: left;
   cursor: pointer;
-  font-size: 10px;
+  font-size: 25px;
 }
 h1 {
   color: rgb(168, 98, 41);
