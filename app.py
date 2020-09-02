@@ -3,7 +3,7 @@ from flask import Flask, request, abort, jsonify, render_template, \
     redirect, url_for, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
-from models import Actor, Movie, setup_db, db_drop_and_create_all
+from models import Actor, Movie, setup_db, db_drop_and_create_all, db
 # from auth import AuthError, requires_auth
 
 
@@ -103,7 +103,15 @@ def delete_movie(movie_id):
     if not movie_to_remove:
         abort(404)
 
-    movie_to_remove.delete()
+    try:
+        movie_to_remove.delete()
+        db.session.commit()
+    except:
+        db.session.rollback()
+    finally:
+        db.session.close()
+    # movie_to_remove.delete()
+    # db.session.commit()
 
     return jsonify({
       'success': True,
@@ -116,9 +124,9 @@ def delete_movie(movie_id):
 # @requires_auth('post:actor')
 def create_actor():
     actor = Actor(
-        name=request.get_json('name'),
-        age=request.get_json('age'),
-        gender=request.get_json('gender')
+        name=request.form.get('name'),
+        age=request.form.get('age'),
+        gender=request.form.get('gender')
         )
     actor.insert()
 
