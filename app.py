@@ -50,14 +50,14 @@ def home():
 # GET
 @app.route('/actors', methods=['GET'])
 @requires_auth('get:actors')
-def get_actors():
+def get_actors(payload):
     return render_template('actors.html',
                            data=Actor.query.order_by(Actor.name).all())
 
 
 @app.route('/movies', methods=['GET'])
-# @requires_auth('get:movies')
-def get_movies():
+@requires_auth('get:movies')
+def get_movies(payload):
     return render_template('movies.html',
                            data=Movie.query.order_by(Movie.title).all())
 

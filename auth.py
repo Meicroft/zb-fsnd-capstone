@@ -18,7 +18,6 @@ class AuthError(Exception):
 
 # Auth Header
 def get_token_auth_header():
-    print(request)
     if "Authorization" not in request.headers:
         abort(401)
 
@@ -30,22 +29,25 @@ def get_token_auth_header():
     elif auth_header_parts[0].lower() != "bearer":
         abort(401)
 
+    print(auth_header_parts,'parts')
+
     token = auth_header_parts[1]
+
+    print(token, 'token 1')
+
     return token
 
 
-def check_permissions(permission, payload):
-    if 'permissions' not in payload:
-        abort(400)
-    if permission not in payload['permissions']:
-        abort(403)
-    return True
-
-
 def verify_decode_jwt(token):
-    json_url = urlopen(f"https://{AUTH0_DOMAIN}/.well-known/jwks.json")
-    jwks = json.loads(json_url.read())
+
+    print(token, 'verify 1')
+    
+    jsonurl = urlopen(f'https://{AUTH0_DOMAIN}/.well-known/jwks.json')
+    jwks = json.loads(jsonurl.read())
     unverified_header = jwt.get_unverified_header(token)
+
+    print(unverified_header, 'verify 2')
+
     rsa_key = {}
     if 'kid' not in unverified_header:
         raise AuthError({
@@ -99,13 +101,28 @@ def verify_decode_jwt(token):
         'description': 'Unable to find the appropriate key.'
     }, 401)
 
+
+def check_permissions(permission, payload):
+    if 'permissions' not in payload:
+        abort(400)
+    if permission not in payload['permissions']:
+        abort(403)
+    return True
+
+
 def requires_auth(permission=''):
     def requires_auth_decorator(f):
         @wraps(f)
         def wrapper(*args, **kwargs):
             token = get_token_auth_header()
+
+            print(token, 'requires token')
+
             try:
                 payload = verify_decode_jwt(token)
+
+                print(payload, 'payload decode')
+
             except:
                 abort(401)
 
