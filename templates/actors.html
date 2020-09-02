@@ -1,92 +1,93 @@
 <html>
   <head>
-    <title>Actors Page</title>>
+    <title>Actors Page</title>
     <link rel="stylesheet" href="/css/style.css" type="text/css">
   </head>
-  <div>
-    <a href="/"><button class="btn btn-primary btn-lg">Back to Home Page</button></a>
-    <a href="/movies"><button class="btn btn-default btn-lg">View Our Movies</button></a>
-  </div>
   <body>
-    <ul id="actors">
-      {% for d in data %}
-      <li>
-        <form action="/actors/{{ d.id }}">
-          <button>Actor Details</button>
+    <h1>Actors Page</h1>
+    <div>
+      <a href="/"><button class="btn btn-primary btn-lg">Back to Home Page</button></a>
+      <a href="/movies"><button class="btn btn-default btn-lg">View Our Movies</button></a>
+    </div>
+      <ul id="actors">
+        {% for d in data %}
+        <li>
+          <form action="/actors/{{ d.id }}">
+            <button>Actor Details</button>
+          </form>
+          {{ d.name }}
+          <button class="delete-button" data-id="{{ d.id }}">Delete Actor</button>
+        </li>
+        {% endfor %}
+      </ul>
+      <form method="post" action="/actors/create">
+          <label>List New Actor</label>
+          <div>
+            <label for="name">Actors Name</label>
+            <input type="text" name="name" />
+          </div>
+          <div>
+            <label for="age">Actors Age</label>
+            <input type="number" name="age" />
+          </div>
+          <div>
+            <label for="gender">Actors Gender</label>
+            <input type="text" name="gender" />
+          </div>
+          <div>
+            <input type="submit" value="List Actor" />
+          </div>
         </form>
-        {{ d.name }}
-        <button class="delete-button" data-id="{{ d.id }}">Delete Actor</button>
-      </li>
-      {% endfor %}
-    </ul>
-    <form method="post" action="/actors/create">
-        <label>List New Actor</label>
-        <div>
-          <label for="name">Actors Name</label>
-          <input type="text" name="name" />
-        </div>
-        <div>
-          <label for="age">Actors Age</label>
-          <input type="number" name="age" />
-        </div>
-        <div>
-          <label for="gender">Actors Gender</label>
-          <input type="text" name="gender" />
-        </div>
-        <div>
-          <input type="submit" value="List Actor" />
-        </div>
-      </form>
-    <script>
-      const deleteBtns = document.querySelectorAll('.delete-button');
-      for (let i = 0; i < deleteBtns.length; i++) {
-        const btn = deleteBtns[i];
-        btn.onclick = function(e) {
-          const actorId = e.target.dataset['id'];
-          fetch('/actors/' + actorId, {
-            method: 'DELETE'
+      <script>
+        const deleteBtns = document.querySelectorAll('.delete-button');
+        for (let i = 0; i < deleteBtns.length; i++) {
+          const btn = deleteBtns[i];
+          btn.onclick = function(e) {
+            const actorId = e.target.dataset['id'];
+            fetch('/actors/' + actorId, {
+              method: 'DELETE'
+            })
+            .then(function() {
+              const item = e.target.parentElement;
+              item.remove();
+            })
+          }
+        }
+        const nameInput = document.getElementById('name');
+        document.getElementById('form').onsubmit = function(e) {
+          e.preventDefault();
+          const name = nameInput.value;
+          nameInput.value = '';
+          fetch('/actors/create', {
+            method: 'POST',
+            body: JSON.stringify({
+              'name': name,
+            }),
+            headers: {
+              'Content-Type': 'application/json',
+            }
           })
-          .then(function() {
-            const item = e.target.parentElement;
-            item.remove();
+          .then(response => response.json())
+          .then(jsonResponse => {
+            const li = document.createElement('li');
+
+            const text = document.createTextNode(' ' + jsonResponse.name);
+            li.appendChild(text);
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'delete-button';
+            deleteBtn.setAttribute('data-id', jsonResponse.id);
+            deleteBtn.innerHTML = '&cross;';
+            li.appendChild(deleteBtn);
+
+            document.getElementById('actors').appendChild(li);
+            document.getElementById('error').className = 'hidden';
+          })
+          .catch(function() {
+            console.error('Error occurred');
+            document.getElementById('error').className = '';
           })
         }
-      }
-      const nameInput = document.getElementById('name');
-      document.getElementById('form').onsubmit = function(e) {
-        e.preventDefault();
-        const name = nameInput.value;
-        nameInput.value = '';
-        fetch('/actors/create', {
-          method: 'POST',
-          body: JSON.stringify({
-            'name': name,
-          }),
-          headers: {
-            'Content-Type': 'application/json',
-          }
-        })
-        .then(response => response.json())
-        .then(jsonResponse => {
-          const li = document.createElement('li');
-
-          const text = document.createTextNode(' ' + jsonResponse.name);
-          li.appendChild(text);
-
-          const deleteBtn = document.createElement('button');
-          deleteBtn.className = 'delete-button';
-          deleteBtn.setAttribute('data-id', jsonResponse.id);
-          deleteBtn.innerHTML = '&cross;';
-          li.appendChild(deleteBtn);
-
-          document.getElementById('actors').appendChild(li);
-          document.getElementById('error').className = 'hidden';
-        })
-        .catch(function() {
-          console.error('Error occurred');
-          document.getElementById('error').className = '';
-        })
-      }
-    </script>
+      </script>
   </body>
 </html>
