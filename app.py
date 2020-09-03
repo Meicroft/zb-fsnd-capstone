@@ -14,7 +14,7 @@ def create_app(test_config=None):
 
     CORS(app, resources={r"/*": {"origins": "*"}})
 
-    db_drop_and_create_all()
+    # db_drop_and_create_all()
 
     return app
 
@@ -37,22 +37,22 @@ def after_request(response):
     return response
 
 
-@app.route('/css/<path:path>')
-def send_css(path):
-    return send_from_directory('css', path)
+# @app.route('/css/<path:path>')
+# def send_css(path):
+#     return send_from_directory('css', path)
 
 
 @app.route('/')
 def home():
-    return render_template('home.html')
+    return jsonify({
+        'success': True,
+        'health': 'App is running.'
+    }), 200
 
 
 # GET
 @app.route('/actors', methods=['GET'])
 def get_actors():
-    # return render_template('actors.html',
-    #                        data=Actor.query.order_by(Actor.name).all())
- 
     data = Actor.query.order_by(Actor.name).all()
 
     return_data = [item.format() for item in data]
@@ -65,9 +65,6 @@ def get_actors():
 
 @app.route('/movies', methods=['GET'])
 def get_movies():
-    # return render_template('movies.html',
-    #                        data=Movie.query.order_by(Movie.title).all())
-
     data=Movie.query.order_by(Movie.title).all()
 
     return_data = [item.format() for item in data]
@@ -169,7 +166,7 @@ def create_actor(payload):
     }), 200
 
 
-@app.route('/movies/create', methods=['POST'])
+@app.route('/movies', methods=['POST'])
 @requires_auth('post:new_movie')
 def create_movie(payload):
     data = request.get_json()
