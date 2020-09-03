@@ -50,8 +50,17 @@ def home():
 # GET
 @app.route('/actors', methods=['GET'])
 def get_actors():
-    return render_template('actors.html',
-                           data=Actor.query.order_by(Actor.name).all())
+    # return render_template('actors.html',
+    #                        data=Actor.query.order_by(Actor.name).all())
+ 
+    data = Actor.query.order_by(Actor.name).all()
+
+    return_data = [item.format() for item in data]
+
+    return jsonify({
+        'success': True,
+        'actors': return_data
+    }), 200
 
 
 @app.route('/movies', methods=['GET'])
