@@ -1,4 +1,5 @@
 # Casting Agency - FSND Capstone
+# PLEASE NOTE - test_app.py was removed due to an inability to use the authorization on a locally hosted server/database because there is no SSL Certificate locally, but Postman (Collection link provided) tests every Endpoint with a passing & failing method.
 
 ## Getting Started
 
