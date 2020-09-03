@@ -125,7 +125,7 @@ def delete_movie(payload, movie_id):
 
 # POST
 @app.route('/actors/create', methods=['POST'])
-@requires_auth('post:actor')
+@requires_auth('post:new_actor')
 def create_actor(payload):
     actor = Actor(
         name=request.form.get('name'),
@@ -138,7 +138,7 @@ def create_actor(payload):
 
 
 @app.route('/movies/create', methods=['POST'])
-@requires_auth('post:movie')
+@requires_auth('post:new_movie')
 def create_movie(payload):
     movie = Movie(
         title=request.form.get('title'),
