@@ -72,8 +72,17 @@ def get_movies():
 @app.route('/actors/<int:actor_id>', methods=['GET'])
 @requires_auth('get:actors')
 def get_actor(payload, actor_id):
-    return render_template('actor.html',
-                           data=Actor.query.get_or_404(actor_id))
+    # return render_template('actor.html',
+    #                        data=Actor.query.get_or_404(actor_id))
+
+    data = Actor.query.get_or_404(actor_id)
+
+    return_data = [item.format() for item in data]
+
+    return jsonify({
+        'success': True,
+        'actors': data.format()
+    }), 200
 
 
 @app.route('/movies/<int:movie_id>', methods=['GET'])
