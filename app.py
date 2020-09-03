@@ -37,11 +37,6 @@ def after_request(response):
     return response
 
 
-# @app.route('/css/<path:path>')
-# def send_css(path):
-#     return send_from_directory('css', path)
-
-
 @app.route('/')
 def home():
     return jsonify({
