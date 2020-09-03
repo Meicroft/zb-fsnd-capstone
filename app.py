@@ -49,26 +49,26 @@ def home():
 
 # GET
 @app.route('/actors', methods=['GET'])
-@requires_auth('get:actors')
-def get_actors(payload):
+def get_actors():
     return render_template('actors.html',
                            data=Actor.query.order_by(Actor.name).all())
 
 
 @app.route('/movies', methods=['GET'])
-@requires_auth('get:movies')
-def get_movies(payload):
+def get_movies():
     return render_template('movies.html',
                            data=Movie.query.order_by(Movie.title).all())
 
 
 @app.route('/actors/<int:actor_id>', methods=['GET'])
+# @requires_auth('get:actors')
 def get_actor(actor_id):
     return render_template('actor.html',
                            data=Actor.query.get_or_404(actor_id))
 
 
 @app.route('/movies/<int:movie_id>', methods=['GET'])
+# @requires_auth('get:movies')
 def get_movie(movie_id):
     return render_template('movie.html',
                            data=Movie.query.get_or_404(movie_id))

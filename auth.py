@@ -29,24 +29,25 @@ def get_token_auth_header():
     elif auth_header_parts[0].lower() != "bearer":
         abort(401)
 
-    print(auth_header_parts,'parts')
-
     token = auth_header_parts[1]
-
-    print(token, 'token 1')
-
     return token
 
 
 def verify_decode_jwt(token):
 
-    print(token, 'verify 1')
-    
+    print('verify 1', token)
+
     jsonurl = urlopen(f'https://{AUTH0_DOMAIN}/.well-known/jwks.json')
+
+    print('verify 2')
+
     jwks = json.loads(jsonurl.read())
+
+    print('verify 3')
+
     unverified_header = jwt.get_unverified_header(token)
 
-    print(unverified_header, 'verify 2')
+    print('verify 4', unverified_header)
 
     rsa_key = {}
     if 'kid' not in unverified_header:
@@ -116,13 +117,8 @@ def requires_auth(permission=''):
         def wrapper(*args, **kwargs):
             token = get_token_auth_header()
 
-            print(token, 'requires token')
-
             try:
                 payload = verify_decode_jwt(token)
-
-                print(payload, 'payload decode')
-
             except:
                 abort(401)
 
