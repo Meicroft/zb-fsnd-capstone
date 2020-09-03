@@ -7,7 +7,7 @@ from flask_migrate import Migrate
 # Config.
 # ---------
 
-database_path = os.environ.get('DATABASE_URL')
+# database_path = os.environ.get('DATABASE_URL')
 if not database_path:
     database_name = "agency"
     database_path = "postgres://{}:{}@{}/{}".format(
@@ -16,7 +16,7 @@ if not database_path:
 db = SQLAlchemy()
 
 
-def setup_db(app):
+def setup_db(app, database_path=database_path):
     app.config["SQLALCHEMY_DATABASE_URI"] = database_path
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.app = app
