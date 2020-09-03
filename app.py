@@ -65,15 +65,22 @@ def get_actors():
 
 @app.route('/movies', methods=['GET'])
 def get_movies():
-    return render_template('movies.html',
-                           data=Movie.query.order_by(Movie.title).all())
+    # return render_template('movies.html',
+    #                        data=Movie.query.order_by(Movie.title).all())
+
+    data=Movie.query.order_by(Movie.title).all()
+
+    return_data = [item.format() for item in data]
+
+    return jsonify({
+        'success': True,
+        'movies': return_data
+    }), 200
 
 
 @app.route('/actors/<int:actor_id>', methods=['GET'])
 @requires_auth('get:actors')
 def get_actor(payload, actor_id):
-    # return render_template('actor.html',
-    #                        data=Actor.query.get_or_404(actor_id))
 
     data = Actor.query.get_or_404(actor_id)
 
@@ -86,8 +93,13 @@ def get_actor(payload, actor_id):
 @app.route('/movies/<int:movie_id>', methods=['GET'])
 @requires_auth('get:movies')
 def get_movie(payload, movie_id):
-    return render_template('movie.html',
-                           data=Movie.query.get_or_404(movie_id))
+
+    data=Movie.query.get_or_404(movie_id)
+
+    return jsonify({
+        'success': True,
+        'movies': data.format()
+    }), 200
 
 
 # DELETE
@@ -151,8 +163,6 @@ def create_actor(payload):
         )
     actor.insert()
 
-    # return redirect(url_for('get_actors'))
-
     return jsonify({
         'success': True,
         'actor': actor.format(),
@@ -162,13 +172,17 @@ def create_actor(payload):
 @app.route('/movies/create', methods=['POST'])
 @requires_auth('post:new_movie')
 def create_movie(payload):
+    data = request.get_json()
     movie = Movie(
-        title=request.form.get('title'),
-        release_date=request.form.get('release_date')
+        title=data['title'],
+        release_date=data['release_date']
         )
     movie.insert()
 
-    return redirect(url_for('get_movies'))
+    return jsonify({
+        'success': True,
+        'movie': movie.format(),
+    }), 200
 
 
 # PATCH
@@ -211,7 +225,7 @@ def edit_movie(payload, movie_id):
     if not movie:
         abort(404)
 
-    data = request.form.get()
+    data = request.get_json()
 
     if 'title' in data and data['title'] != '':
         movie.title = data['title']
