@@ -77,8 +77,6 @@ def get_actor(payload, actor_id):
 
     data = Actor.query.get_or_404(actor_id)
 
-    return_data = [item.format() for item in data]
-
     return jsonify({
         'success': True,
         'actors': data.format()
@@ -142,17 +140,22 @@ def delete_movie(payload, movie_id):
 
 
 # POST
-@app.route('/actors/create', methods=['POST'])
+@app.route('/actors', methods=['POST'])
 @requires_auth('post:new_actor')
 def create_actor(payload):
     actor = Actor(
-        name=request.form.get('name'),
-        age=request.form.get('age'),
-        gender=request.form.get('gender')
+        name=request.get_json('name'),
+        age=request.get_json('age'),
+        gender=request.get_json('gender')
         )
     actor.insert()
 
-    return redirect(url_for('get_actors'))
+    # return redirect(url_for('get_actors'))
+
+    return jsonify({
+        'success': True,
+        'actor': actor.format(),
+    }), 200
 
 
 @app.route('/movies/create', methods=['POST'])
@@ -178,7 +181,7 @@ def edit_actor(payload, actor_id):
     if not actor:
         abort(404)
 
-    data = request.form.get()
+    data = request.get_json()
 
     if 'name' in data and data['name'] != '':
         actor.name = data['name']
