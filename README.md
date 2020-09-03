@@ -44,7 +44,7 @@ flask run --reload
 
 # API Specs
 - Public Access:
-    The home page (`https://{{host}}/`) is accessible by anyone, and without running the server locally you can access with the URL listed below.
+    The home page (`https://{{host}}/`) is accessible by anyone, and without running the server locally you can access the live hosted app at https://zb-fsnd-capstone.herokuapp.com/.
 
 - Casting Assistant:
     The casting assistant has permissions to view actor or movie specific pages (ex.:`https://{{host}}/actors/<int:actor_id>`)
