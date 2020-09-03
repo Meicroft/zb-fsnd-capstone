@@ -143,10 +143,11 @@ def delete_movie(payload, movie_id):
 @app.route('/actors', methods=['POST'])
 @requires_auth('post:new_actor')
 def create_actor(payload):
+    data = request.get_json()
     actor = Actor(
-        name=request.get_json('name'),
-        age=request.get_json('age'),
-        gender=request.get_json('gender')
+        name=data['name'],
+        age=data['age'],
+        gender=data['gender']
         )
     actor.insert()
 
