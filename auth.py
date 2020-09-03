@@ -35,19 +35,20 @@ def get_token_auth_header():
 
 def verify_decode_jwt(token):
 
-    print('verify 1', token)
+    print('v1', token)
+    
+    try:
+        url = f'https://{AUTH0_DOMAIN}/.well-known/jwks.json'
+        print(url)
+        jsonurl = urlopen(url)
+        print('v2')
+        jwks = json.loads(jsonurl.read())
+        print('v3')
+        unverified_header = jwt.get_unverified_header(token)
+    except Exception as e:
+        print(e)
 
-    jsonurl = urlopen(f'https://{AUTH0_DOMAIN}/.well-known/jwks.json')
-
-    print('verify 2')
-
-    jwks = json.loads(jsonurl.read())
-
-    print('verify 3')
-
-    unverified_header = jwt.get_unverified_header(token)
-
-    print('verify 4', unverified_header)
+    print('v4')
 
     rsa_key = {}
     if 'kid' not in unverified_header:

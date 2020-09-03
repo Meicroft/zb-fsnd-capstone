@@ -33,24 +33,12 @@ def db_drop_and_create_all():
 # Models
 # ---------
 
-actors_in_movies = db.Table('actors_in_movies',
-                            db.Column('movie_id', db.Integer,
-                                      db.ForeignKey('movies.id'),
-                                      primary_key=True),
-                            db.Column('actor_id', db.Integer,
-                                      db.ForeignKey('actors.id'),
-                                      primary_key=True)
-                            )
-
-
 class Movie(db.Model):
     __tablename__ = "movies"
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(180), nullable=False)
     release_date = db.Column(db.Date, nullable=False)
-    actors = db.relationship('Actor', secondary=actors_in_movies,
-                             backref=db.backref('movies', lazy=True))
 
     def __repr__(self):
         return f'{self.title}, released {self.release_date}.'

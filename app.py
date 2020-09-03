@@ -49,7 +49,8 @@ def home():
 
 # GET
 @app.route('/actors', methods=['GET'])
-def get_actors():
+@requires_auth('get:actors')
+def get_actors(payload):
     return render_template('actors.html',
                            data=Actor.query.order_by(Actor.name).all())
 
