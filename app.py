@@ -49,8 +49,7 @@ def home():
 
 # GET
 @app.route('/actors', methods=['GET'])
-@requires_auth('get:actors')
-def get_actors(payload):
+def get_actors():
     return render_template('actors.html',
                            data=Actor.query.order_by(Actor.name).all())
 
@@ -62,23 +61,23 @@ def get_movies():
 
 
 @app.route('/actors/<int:actor_id>', methods=['GET'])
-# @requires_auth('get:actors')
-def get_actor(actor_id):
+@requires_auth('get:actors')
+def get_actor(payload, actor_id):
     return render_template('actor.html',
                            data=Actor.query.get_or_404(actor_id))
 
 
 @app.route('/movies/<int:movie_id>', methods=['GET'])
-# @requires_auth('get:movies')
-def get_movie(movie_id):
+@requires_auth('get:movies')
+def get_movie(payload, movie_id):
     return render_template('movie.html',
                            data=Movie.query.get_or_404(movie_id))
 
 
 # DELETE
 @app.route('/actors/<int:actor_id>', methods=['DELETE'])
-# @requires_auth('delete:actor')
-def delete_actor(actor_id):
+@requires_auth('delete:actor')
+def delete_actor(payload, actor_id):
     if not actor_id:
         abort(404)
 
@@ -101,8 +100,8 @@ def delete_actor(actor_id):
 
 
 @app.route('/movies/<int:movie_id>', methods=['DELETE'])
-# @requires_auth('delete:movie')
-def delete_movie(movie_id):
+@requires_auth('delete:movie')
+def delete_movie(payload, movie_id):
     if not movie_id:
         abort(404)
 
@@ -126,8 +125,8 @@ def delete_movie(movie_id):
 
 # POST
 @app.route('/actors/create', methods=['POST'])
-# @requires_auth('post:actor')
-def create_actor():
+@requires_auth('post:actor')
+def create_actor(payload):
     actor = Actor(
         name=request.form.get('name'),
         age=request.form.get('age'),
@@ -139,8 +138,8 @@ def create_actor():
 
 
 @app.route('/movies/create', methods=['POST'])
-# @requires_auth('post:movie')
-def create_movie():
+@requires_auth('post:movie')
+def create_movie(payload):
     movie = Movie(
         title=request.form.get('title'),
         release_date=request.form.get('release_date')
@@ -152,8 +151,8 @@ def create_movie():
 
 # PATCH
 @app.route('/actors/<int:actor_id>', methods=['PATCH'])
-# @requires_auth('patch:actor')
-def edit_actor(actor_id):
+@requires_auth('patch:actor')
+def edit_actor(payload, actor_id):
     if not actor_id:
         abort(404)
 
@@ -181,8 +180,8 @@ def edit_actor(actor_id):
 
 
 @app.route('/movies/<int:movie_id>', methods=['PATCH'])
-# @requires_auth('patch:movie')
-def edit_movie(movie_id):
+@requires_auth('patch:movie')
+def edit_movie(payload, movie_id):
     if not movie_id:
         abort(404)
 
