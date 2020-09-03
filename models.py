@@ -62,8 +62,7 @@ class Movie(db.Model):
         return{
             "id": self.id,
             "title": self.title,
-            "release_date": self.release_date,
-            "actors": self.actors
+            "release_date": self.release_date
         }
 
     def short(self):

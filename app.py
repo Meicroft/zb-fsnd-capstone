@@ -160,7 +160,7 @@ def edit_actor(payload, actor_id):
     if not actor:
         abort(404)
 
-    data = request.get_json()
+    data = request.form.get()
 
     if 'name' in data and data['name'] != '':
         actor.name = data['name']
@@ -189,7 +189,7 @@ def edit_movie(payload, movie_id):
     if not movie:
         abort(404)
 
-    data = request.get_json()
+    data = request.form.get()
 
     if 'title' in data and data['title'] != '':
         movie.title = data['title']
