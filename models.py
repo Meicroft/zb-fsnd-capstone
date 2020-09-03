@@ -7,7 +7,7 @@ from flask_migrate import Migrate
 # Config.
 # ---------
 
-# database_path = os.environ.get('DATABASE_URL')
+database_path = os.environ.get('DATABASE_URL')
 if not database_path:
     database_name = "agency"
     database_path = "postgres://{}:{}@{}/{}".format(
