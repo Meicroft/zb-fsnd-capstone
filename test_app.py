@@ -10,10 +10,14 @@ from models import setup_db, Actor, Movie
 class CastingAgencyTestCase(unittest.TestCase):
     def setUp(self):
         self.app = create_app()
+
         self.client = self.app.test_client
+
         self.database_name = "casting_test"
         self.database_path = "postgres://{}/{}".format('localhost:5432', self.database_name)
+
         setup_db(self.app, self.database_path)
+
         self.assistant_token = os.environ['assistant_token']
         self.direct_token = os.environ['direct_token']
         self.producer_token = os.environ['producer_token']
@@ -54,33 +58,30 @@ class CastingAgencyTestCase(unittest.TestCase):
 
         self.INVALID_UPDATE_MOVIE = {}
 
-        with self.app.app_context():
-            self.db = SQLAlchemy()
-            self.db.init_app(self.app)
-            # create all tables
-            self.db.create_all()
-
     # Executed after reach test
     def tearDown(self):
         pass
 
     # Test for GET / (home endpoint)
     def test_health(self):
-        res = self.client().get('/')
-        # data = json.loads(res.data)
-
+        self.client = self.app.test_client
+        print(self.client())
+        res = self.client().get('/actors')
+        print(res)
+        data = json.loads(res.data)
+        
         self.assertEqual(res.status_code, 200)
         self.assertIn('health', data)
         self.assertEqual(data['health'], 'App is running.')
 
-    # def test_api_call_without_token(self):
-    # # Failing Test trying to make a call without token
-    #     res = self.client().get('/actors')
-    #     data = json.loads(res.data)
+    # Failing Test trying to make a call without token
+    def test_api_call_without_token(self):
+        res = self.client().get('/actors')
+        data = json.loads(res.data)
 
-    #     self.assertEqual(res.status_code, 401)
-    #     self.assertFalse(data["success"])
-    #     self.assertEqual(data["message"], "Authorization Header is required.")
+        self.assertEqual(res.status_code, 401)
+        self.assertFalse(data["success"])
+        self.assertEqual(data["message"], "Authorization Header is required.")
 
     # def test_get_actors(self):
     # # Passing Test for GET /actors
