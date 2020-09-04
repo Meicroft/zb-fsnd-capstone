@@ -81,7 +81,7 @@ class CastingAgencyTestCase(unittest.TestCase):
     #####
 
     # Test for GET / (home endpoint)
-    def test_health(self):
+    def test_health_as_public(self):
         res = self.client().get('/')
         data = json.loads(res.data)
 
@@ -90,7 +90,7 @@ class CastingAgencyTestCase(unittest.TestCase):
         self.assertEqual(data['health'], 'App is running.')
 
     # Passing Test to get actors page
-    def test_get_actors(self):
+    def test_get_actors_as_public(self):
         actor = Actor(name="Robert Downey Jr.", age="55", gender="male")
         actor.insert()
 
@@ -102,7 +102,7 @@ class CastingAgencyTestCase(unittest.TestCase):
         self.assertTrue(data['actors'])
 
     #Passing Test to get movies page
-    def test_get_movies(self):
+    def test_get_movies_as_public(self):
         movie = Movie(title="Big Fat Liar", release_date="2/8/2003")
         movie.insert()
 
@@ -122,9 +122,7 @@ class CastingAgencyTestCase(unittest.TestCase):
         actor = Actor(name="Robert Downey Jr.", age="55", gender="male")
         actor.insert()
 
-        print('ass', self.assistant_auth_header)
         headers=self.assistant_auth_header
-        print(headers)
         res = self.client().get('/actors/1', headers=headers)
         data = json.loads(res.data)
 
@@ -202,6 +200,39 @@ class CastingAgencyTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
 
+    #Failing Test to create an actor
+    def test_401_post_actor_as_public(self):
+        res = self.client().post('/actors', json=self.new_actor)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 401)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], "The server could not verify that you are authorized to access the URL requested. You either supplied the wrong credentials (e.g. a bad password), or your browser doesn't understand how to supply the credentials required.")
+
+    #Failing Test to patch an actor
+    def test_401_update_actor_as_public(self):
+        actor = Actor(name="Robert Downey Jr.", age="55", gender="male")
+        actor.insert()
+
+        res = self.client().patch('/actors/1', json=self.update_actor)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 401)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], "The server could not verify that you are authorized to access the URL requested. You either supplied the wrong credentials (e.g. a bad password), or your browser doesn't understand how to supply the credentials required.")
+
+    #Failing Test to delete an actor
+    def test_401_delete_actor_as_public(self):
+        actor = Actor(name="Robert Downey Jr.", age="55", gender="male")
+        actor.insert()
+
+        res = self.client().get('/actors/1')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 401)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], "The server could not verify that you are authorized to access the URL requested. You either supplied the wrong credentials (e.g. a bad password), or your browser doesn't understand how to supply the credentials required.")
+
     #####
     # Producer Tests
     #####
@@ -224,6 +255,28 @@ class CastingAgencyTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
+
+    #Failing Test to create a movie
+    def test_401_post_movie_as_public(self):
+        res = self.client().post('/movies', json=self.new_movie)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 401)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], "The server could not verify that you are authorized to access the URL requested. You either supplied the wrong credentials (e.g. a bad password), or your browser doesn't understand how to supply the credentials required.")
+
+    #Passing Test to delete an actor
+    def test_401_delete_movie_as_public(self):
+        movie = Movie(title="Big Fat Liar", release_date="2/8/2003")
+        movie.insert()
+
+        res = self.client().get('/movies/1')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 401)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], "The server could not verify that you are authorized to access the URL requested. You either supplied the wrong credentials (e.g. a bad password), or your browser doesn't understand how to supply the credentials required.")
+
 
 
 if __name__ == "__main__":
