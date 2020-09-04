@@ -22,12 +22,18 @@ class CastingAgencyTestCase(unittest.TestCase):
         self.assistant_token = os.environ.get('assistant_token')
         self.direct_token = os.environ.get('direct_token')
         self.producer_token = os.environ.get('producer_token')
+
+        # print('assistant', self.assistant_token)
+        # print('director', self.direct_token)
+        # print('producer', self.producer_token)
         
         self.assistant_auth_header = {'Authorization': 'Bearer {}'.format(self.assistant_token)}
-        
-        self.director_auth_header = {'AUthorization': 'Bearer {}'.format(self.direct_token)}
+        self.director_auth_header = {'Authorization': 'Bearer {}'.format(self.direct_token)}
+        self.producer_auth_header = {'Authorization': 'Bearer {}'.format(self.producer_token)}
 
-        self.producer_auth_header = {'AUthorization': 'Bearer {}'.format(self.producer_token)}
+        # print('assistant', self.assistant_auth_header)
+        # print('director', self.director_auth_header)
+        # print('producer', self.producer_auth_header)
 
         with self.app.app_context():
             db_drop_and_create_all()
@@ -53,7 +59,7 @@ class CastingAgencyTestCase(unittest.TestCase):
 
         self.new_movie = {
             "title": "Big Fat Liar",
-            "release_date": 2/8/2003
+            "release_date": "2/8/2003"
         }
 
         self.bad_new_movie = {
@@ -61,7 +67,7 @@ class CastingAgencyTestCase(unittest.TestCase):
         }
 
         self.update_movie = {
-            "release_date": 2/8/2004
+            "release_date": "2/8/2004"
         }
 
         self.bad_update_movie = {}
@@ -112,11 +118,14 @@ class CastingAgencyTestCase(unittest.TestCase):
     #####
 
     # Passing Test to get specific actor with token
-    def test_get_specific_actor(self):
+    def test_get_specific_actor_as_assistant(self):
         actor = Actor(name="Robert Downey Jr.", age="55", gender="male")
         actor.insert()
 
-        res = self.client().get('/actors/1', headers=self.assistant_auth_header)
+        print('ass', self.assistant_auth_header)
+        headers=self.assistant_auth_header
+        print(headers)
+        res = self.client().get('/actors/1', headers=headers)
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -124,7 +133,7 @@ class CastingAgencyTestCase(unittest.TestCase):
         self.assertTrue(data['actors'])
 
     #Failing Test to get a specific actor
-    def test_401_get_specific_actor(self):
+    def test_401_get_specific_actor_as_assistant(self):
         actor = Actor(name="Robert Downey Jr.", age="55", gender="male")
         actor.insert()
 
@@ -133,14 +142,14 @@ class CastingAgencyTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code, 401)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'], 'unauthorized')
+        self.assertEqual(data['message'], "The server could not verify that you are authorized to access the URL requested. You either supplied the wrong credentials (e.g. a bad password), or your browser doesn't understand how to supply the credentials required.")
 
     #Passing Test to get specific movie with token
-    def test_get_specific_movie(self):
+    def test_get_specific_movie_as_assistant(self):
         movie = Movie(title="Big Fat Liar", release_date="2/8/2003")
         movie.insert()
 
-        res = self.client().get('/movies/1', headers=self.assistant_auth_header)
+        res = self.client().get('/movies/1', headers=self.producer_auth_header)
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -148,7 +157,7 @@ class CastingAgencyTestCase(unittest.TestCase):
         self.assertTrue(data['movies'])
 
     #Failing Test tp get a specific movie
-    def test_401_get_specific_movie(self):
+    def test_401_get_specific_movie_as_assistant(self):
         movie = Movie(title="Big Fat Liar", release_date="2/8/2003")
         movie.insert()
 
@@ -157,19 +166,65 @@ class CastingAgencyTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code, 401)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'], 'unauthorized')
+        self.assertEqual(data['message'], "The server could not verify that you are authorized to access the URL requested. You either supplied the wrong credentials (e.g. a bad password), or your browser doesn't understand how to supply the credentials required.")
 
     #####
     # Director Tests
     #####
 
     #Passing Test to create an actor
-    def test_post_actor(self):
+    def test_post_actor_as_director(self):
         res = self.client().post('/actors', headers=self.director_auth_header, json=self.new_actor)
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
+
+    #Passing Test to patch an actor
+    def test_update_actor_as_director(self):
+        actor = Actor(name="Robert Downey Jr.", age="55", gender="male")
+        actor.insert()
+
+        res = self.client().patch('/actors/1', headers=self.director_auth_header, json=self.update_actor)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+
+    #Passing Test to delete an actor
+    def test_delete_actor_as_director(self):
+        actor = Actor(name="Robert Downey Jr.", age="55", gender="male")
+        actor.insert()
+
+        res = self.client().get('/actors/1', headers=self.director_auth_header)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+
+    #####
+    # Producer Tests
+    #####
+
+    #Passing Test to create a movie
+    def test_post_movie_as_producer(self):
+        res = self.client().post('/movies', headers=self.producer_auth_header, json=self.new_movie)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+
+    #Passing Test to delete an actor
+    def test_delete_movie_as_producer(self):
+        movie = Movie(title="Big Fat Liar", release_date="2/8/2003")
+        movie.insert()
+
+        res = self.client().get('/movies/1', headers=self.producer_auth_header)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+
 
 if __name__ == "__main__":
     unittest.main()
