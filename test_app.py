@@ -58,9 +58,11 @@ class CastingAgencyTestCase(unittest.TestCase):
 
         self.INVALID_UPDATE_MOVIE = {}
 
+
     # Executed after reach test
     def tearDown(self):
         pass
+
 
     # Test for GET / (home endpoint)
     def test_health(self):
@@ -69,10 +71,11 @@ class CastingAgencyTestCase(unittest.TestCase):
         res = self.client().get('/actors')
         print(res)
         data = json.loads(res.data)
-        
+
         self.assertEqual(res.status_code, 200)
         self.assertIn('health', data)
         self.assertEqual(data['health'], 'App is running.')
+
 
     # Failing Test trying to make a call without token
     def test_api_call_without_token(self):
