@@ -3,6 +3,7 @@ from flask import request, abort
 from functools import wraps
 from jose import jwt
 from urllib.request import urlopen
+import os
 
 # AUTH0_DOMAIN = 'dev-71tt1j9b.us.auth0.com'
 # ALGORITHMS = ['RS256']
