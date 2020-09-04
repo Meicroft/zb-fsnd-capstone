@@ -48,6 +48,7 @@ def home():
 # GET
 @app.route('/actors', methods=['GET'])
 def get_actors():
+    
     data = Actor.query.order_by(Actor.name).all()
 
     return_data = [item.format() for item in data]
@@ -60,6 +61,7 @@ def get_actors():
 
 @app.route('/movies', methods=['GET'])
 def get_movies():
+
     data=Movie.query.order_by(Movie.title).all()
 
     return_data = [item.format() for item in data]
