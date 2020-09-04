@@ -113,6 +113,15 @@ class CastingAgencyTestCase(unittest.TestCase):
         self.assertEqual(data['success'], True)
         self.assertTrue(data['movies'])
 
+    #Failing Test to get non-existant page
+    def test_404_get_fake_page(self):
+        res = self.client().get('/studios')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['success'], False)
+        self.assertTrue(data['message'], "The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.")
+
     #####
     # Assistant Tests
     #####
@@ -122,8 +131,7 @@ class CastingAgencyTestCase(unittest.TestCase):
         actor = Actor(name="Robert Downey Jr.", age="55", gender="male")
         actor.insert()
 
-        headers=self.assistant_auth_header
-        res = self.client().get('/actors/1', headers=headers)
+        res = self.client().get('/actors/1', headers=self.assistant_auth_header)
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -141,13 +149,22 @@ class CastingAgencyTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 401)
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], "The server could not verify that you are authorized to access the URL requested. You either supplied the wrong credentials (e.g. a bad password), or your browser doesn't understand how to supply the credentials required.")
+    
+    #Failing Test to get a fake specific actor
+    def test_404_get_specific_actor_as_assistant(self):
+        res = self.client().get('/actors/30', headers=self.assistant_auth_header)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], "The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.")
 
     #Passing Test to get specific movie with token
     def test_get_specific_movie_as_assistant(self):
         movie = Movie(title="Big Fat Liar", release_date="2/8/2003")
         movie.insert()
 
-        res = self.client().get('/movies/1', headers=self.producer_auth_header)
+        res = self.client().get('/movies/1', headers=self.assistant_auth_header)
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -165,6 +182,15 @@ class CastingAgencyTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 401)
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], "The server could not verify that you are authorized to access the URL requested. You either supplied the wrong credentials (e.g. a bad password), or your browser doesn't understand how to supply the credentials required.")
+
+    #Failing Test to get a fake specific movie
+    def test_404_get_specific_movie_as_assistant(self):
+        res = self.client().get('/movies/30', headers=self.assistant_auth_header)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], "The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.")
 
     #####
     # Director Tests
