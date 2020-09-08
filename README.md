@@ -1,5 +1,3 @@
-# PLEASE NOTE - test_app.py was removed due to an inability to use the authorization on a locally hosted server/database because there is no SSL Certificate locally, but Postman (Collection link provided) tests every Endpoint with a passing & failing method. See 
-
 # Casting Agency - FSND Capstone
 ## This Casting Agency API supports The basic needs to vreate, view, edit, and remove actors & movies from an Agency's database.
 
@@ -44,6 +42,9 @@ Once you're insine the working directory, have created & source'd into your VENV
 ```
 flask run --reload
 ```
+
+## Testing
+Once you're in the project directory & virtualenv, run `pytest`. Any failing tests are likely due to expired JWTs, update those in setup.sh, run `. ./setup.sh`, and rerun `pytest`.
 
 # API Specs
 - Public Access:
